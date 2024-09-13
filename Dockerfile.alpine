@@ -1,0 +1,20 @@
+FROM alpine:3.17
+
+RUN apk update && \
+    apk add --no-cache gammu-smsd curl gettext tzdata ca-certificates
+
+ENV PIN 0000
+ENV LC_ALL en_US.UTF-8
+ENV TZ UTC
+
+COPY gammurc /etc/gammurc
+COPY sms_to_telegram.sh /etc/sms_to_telegram.sh
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+
+RUN mkdir /var/log/smsd/ && \
+	mkdir -p /var/spool/gammu/ && \
+	cd /var/spool/gammu/ && \
+	mkdir inbox outbox sent error && \
+    chmod +x /usr/bin/entrypoint.sh /etc/sms_to_telegram.sh
+
+ENTRYPOINT ["entrypoint.sh"]
