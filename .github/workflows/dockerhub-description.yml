@@ -1,0 +1,25 @@
+name: Update Docker Hub Description
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+      - .github/workflows/dockerhub-description.yml
+jobs:
+  PushContainerReadme:
+    runs-on: ubuntu-latest
+    name: Push README to Docker Hub
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+      - name: push README to Dockerhub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/sms-to-telegram
+          provider: dockerhub
+          short_description: "A Docker container that forwards SMS messages from a GSM modem to a Telegram chat using gammu-smsd."
+          readme_file: "README.md"
